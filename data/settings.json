@@ -1,0 +1,12 @@
+{
+  "searchEngine": "duckduckgo",
+  "gameSource": "PlayerNation",
+  "decoyTitle": "IXL | Math, Language Arts, Science, Social Studies, and Spanish",
+  "decoyFavicon": "https://www.ixl.com/favicon.ico",
+  "decoyPreset": "ixl",
+  "proxyEnabled": true,
+  "proxyBackend": "bridge",
+  "proxyTransport": "libcurl",
+  "wispServer": "",
+  "cloakEnabled": true
+}
