@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GuiBV Browser - Scramjet</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1a1a; }
+    iframe { width: 100%; height: 100%; border: none; }
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #888;
+      font-family: system-ui, sans-serif;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #333;
+      border-top-color: #f5a623;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error { color: #f44; text-align: center; padding: 20px; }
+    .error-detail { font-size: 12px; margin-top: 8px; color: #666; max-width: 400px; word-break: break-word; }
+  </style>
+</head>
+<body>
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <span id="status">Initializing Scramjet...</span>
+  </div>
+  <iframe id="content" style="display: none;"></iframe>
+
+  <script type="module">
+    import { BareMuxConnection } from "/baremux/index.mjs";
+
+    const params = new URLSearchParams(window.location.search);
+    const targetUrl = params.get("url");
+    const transport = params.get("transport") || "libcurl";
+    const wispServer = params.get("wisp") || `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/wisp/`;
+
+    function setStatus(text) {
+      const el = document.getElementById("status");
+      if (el) el.textContent = text;
+      console.log("[Scramjet]", text);
+    }
+
+    function showError(message, detail = "") {
+      const loading = document.getElementById("loading");
+      if (loading) {
+        loading.innerHTML = `
+          <div class="error">
+            <p>${message}</p>
+            ${detail ? `<p class="error-detail">${detail}</p>` : ""}
+          </div>
+        `;
+      }
+      console.error("[Scramjet Error]", message, detail);
+      window.parent.postMessage({ type: "error", message, detail }, "*");
+    }
+
+    async function setupTransport() {
+      try {
+        setStatus("Setting up transport...");
+        const connection = new BareMuxConnection("/baremux/worker.js");
+        const transportPath = transport === "epoxy" ? "/epoxy/index.mjs" : "/libcurl/index.mjs";
+        await connection.setTransport(transportPath, [{ wisp: wispServer }]);
+        console.log("[Scramjet] Transport configured:", transportPath, "wisp:", wispServer);
+        return connection;
+      } catch (err) {
+        console.error("[Scramjet] Transport setup failed:", err);
+        throw err;
+      }
+    }
+
+    async function registerServiceWorker() {
+      if (!("serviceWorker" in navigator)) {
+        throw new Error("Service Workers not supported");
+      }
+
+      setStatus("Registering service worker...");
+      
+      const existingRegs = await navigator.serviceWorker.getRegistrations();
+      for (const reg of existingRegs) {
+        if (reg.scope.includes("/scramjet/service/")) {
+          await reg.unregister();
+          console.log("[Scramjet] Unregistered old SW");
+        }
+      }
+
+      const reg = await navigator.serviceWorker.register("/scramjet/sw.js", {
+        scope: "/scramjet/service/",
+        type: "classic",
+        updateViaCache: "none"
+      });
+      
+      console.log("[Scramjet] SW registered, waiting for activation...");
+      setStatus("Waiting for service worker...");
+
+      const waitForActive = () => new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => reject(new Error("SW activation timeout")), 10000);
+        
+        const checkActive = () => {
+          if (reg.active) {
+            clearTimeout(timeout);
+            resolve(reg.active);
+            return true;
+          }
+          return false;
+        };
+
+        if (checkActive()) return;
+
+        const worker = reg.installing || reg.waiting;
+        if (worker) {
+          worker.addEventListener("statechange", () => {
+            console.log("[Scramjet] SW state:", worker.state);
+            if (worker.state === "activated") {
+              clearTimeout(timeout);
+              resolve(worker);
+            } else if (worker.state === "redundant") {
+              clearTimeout(timeout);
+              reject(new Error("SW became redundant"));
+            }
+          });
+        }
+      });
+
+      await waitForActive();
+      console.log("[Scramjet] SW active");
+      return reg;
+    }
+
+    async function init() {
+      try {
+        if (!targetUrl) {
+          showError("No URL provided");
+          return;
+        }
+
+        let bareMux;
+        try {
+          bareMux = await setupTransport();
+        } catch (err) {
+          showError("Transport setup failed", err.message);
+          return;
+        }
+
+        try {
+          await registerServiceWorker();
+        } catch (err) {
+          showError("Service worker failed", err.message);
+          return;
+        }
+
+        setStatus("Loading " + new URL(targetUrl).hostname + "...");
+        
+        const encodedUrl = encodeURIComponent(targetUrl);
+        const frame = document.getElementById("content");
+        frame.src = `/scramjet/service/${encodedUrl}`;
+        
+        frame.onload = () => {
+          document.getElementById("loading").style.display = "none";
+          frame.style.display = "block";
+          window.parent.postMessage({ type: "scramjet-loaded", url: targetUrl }, "*");
+        };
+
+        setTimeout(() => {
+          const loading = document.getElementById("loading");
+          if (loading && loading.style.display !== "none") {
+            loading.style.display = "none";
+            frame.style.display = "block";
+          }
+        }, 12000);
+
+      } catch (err) {
+        console.error("[Scramjet] Init error:", err);
+        showError("Initialization failed", err.message);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
