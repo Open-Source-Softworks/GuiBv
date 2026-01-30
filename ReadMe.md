@@ -1,8 +1,8 @@
-# GuiBV Browser Gaming Platform
+# GuiBV Web-Proxy
 
 ## Overview
 
-GuiBV is a browser-based gaming platform that allows users to play web games, browse the internet through an embedded browser, and manage bookmarks. The platform features a dark-themed gaming UI with a yellow color scheme, inspired by Discord and Steam, with a collapsible sidebar navigation and responsive design. The platform uses DuckDuckGo as the default search engine.
+GuiBV is a web-proxy that allows users to play blocked games, browse the internet through an embedded browser, and manage bookmarks. The platform features a dark-themed gaming UI with a yellow color scheme, inspired by Discord and Steam, with a collapsible sidebar navigation and responsive design. The platform uses DuckDuckGo as the default search engine.
 
 The application is built as a full-stack TypeScript project with a React frontend and Express backend, using in-memory storage for games, bookmarks, notifications, and user settings.
 
