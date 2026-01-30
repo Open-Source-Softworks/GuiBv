@@ -10,10 +10,10 @@ import type { Game } from "@shared/schema";
 
 const quickActions = [
   {
-    title: "Arcade",
+    title: "Apps",
     description: "Browse & play titles",
     icon: Gamepad2,
-    href: "/play",
+    href: "/games",
     color: "from-yellow-500 to-amber-500",
   },
   {
@@ -61,9 +61,9 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap gap-3">
             <Button asChild>
-              <Link href="/play" data-testid="button-browse-arcade">
+              <Link href="/games" data-testid="button-browse-apps">
                 <Gamepad2 className="mr-2 h-4 w-4" />
-                Browse Arcade
+                Browse Apps
               </Link>
             </Button>
             <Button variant="outline" asChild>
@@ -109,7 +109,7 @@ export default function Home() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-heading font-semibold text-xl">Featured Titles</h2>
           <Button variant="ghost" asChild size="sm">
-            <Link href="/play" data-testid="link-view-all-titles">
+            <Link href="/games" data-testid="link-view-all-titles">
               View All
               <ArrowRight className="ml-1 h-4 w-4" />
             </Link>

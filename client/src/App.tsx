@@ -22,7 +22,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/play" component={Play} />
+      <Route path="/games" component={Play} />
       <Route path="/browser" component={Browser} />
       <Route path="/bookmarks" component={Bookmarks} />
       <Route path="/community" component={Community} />

@@ -20,7 +20,7 @@ import { SettingsModal } from "./SettingsModal";
 
 const navItems = [
   { title: "Home", url: "/", icon: Home },
-  { title: "Arcade", url: "/play", icon: Gamepad2 },
+  { title: "Apps", url: "/games", icon: Gamepad2 },
   { title: "Browser", url: "/browser", icon: Globe },
   { title: "Bookmarks", url: "/bookmarks", icon: Bookmark },
   { title: "Community", url: "/community", icon: MessageCircle },

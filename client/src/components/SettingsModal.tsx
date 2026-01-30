@@ -96,9 +96,9 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                 <Globe className="h-3 w-3" />
                 <span className="hidden sm:inline">Proxy</span>
               </TabsTrigger>
-              <TabsTrigger value="arcade" className="flex items-center gap-1" data-testid="tab-arcade">
+              <TabsTrigger value="apps" className="flex items-center gap-1" data-testid="tab-apps">
                 <Gamepad2 className="h-3 w-3" />
-                <span className="hidden sm:inline">Arcade</span>
+                <span className="hidden sm:inline">Apps</span>
               </TabsTrigger>
               <TabsTrigger value="decoy" className="flex items-center gap-1" data-testid="tab-decoy">
                 <Shield className="h-3 w-3" />
@@ -201,16 +201,10 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                       data-testid="input-wisp-server"
                     />
                   </div>
-
-                  <div className="p-4 bg-muted rounded-md">
-                    <p className="text-sm text-muted-foreground">
-                      The proxy helps bypass network restrictions and improves loading speeds for websites.
-                    </p>
-                  </div>
                 </div>
               </TabsContent>
 
-              <TabsContent value="arcade" className="space-y-6 m-0">
+              <TabsContent value="apps" className="space-y-6 m-0">
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="game-source">Source</Label>
@@ -333,7 +327,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
                   <h3 className="font-heading font-bold text-2xl bg-gradient-to-r from-primary to-yellow-400 bg-clip-text text-transparent">
                     GuiBV
                   </h3>
-                  <p className="text-muted-foreground mt-1">Version 1.0.0</p>
+                  <p className="text-muted-foreground mt-1">Version 1.2.0</p>
                   <p className="text-sm text-muted-foreground mt-4 max-w-sm">
                     A custom browser platform. Browse titles, surf the web, and manage your bookmarks all in one place.
                   </p>
