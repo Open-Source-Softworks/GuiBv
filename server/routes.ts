@@ -103,8 +103,8 @@ const GAME_SOURCES = {
     games: "https://cdn.jsdelivr.net/gh/duckmath/duckmath.github.io@main/backup_classes.json"
   },
   "PlayerNation": {
-    games: "https://player-nation.anjumanallana.in/resources/games.json",
-    assets: "https://player-nation.anjumanallana.in/resources/semag"
+    games: "https://selenite.cc/resources/games.json",
+    assets: "https://selenite.cc/resources/semag"
   }
 };
 
